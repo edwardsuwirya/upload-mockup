@@ -9,10 +9,9 @@ var multer = require('multer');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, '/Users/edo/NodeJSProjects/upload-mockup/upload')
+        cb(null, './upload')
     },
     filename: function (req, file, cb) {
-        console.log(file);
         cb(null, file.originalname);
     }
 });
@@ -22,11 +21,11 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8888;
 
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "http://localhost:6969");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 var router = express.Router();
 router.get('/', function (req, res) {
@@ -37,12 +36,16 @@ router.get('/', function (req, res) {
     });
 });
 
-router.post('/upload',  function (req, res) {
+router.post('/upload', function (req, res) {
     var upload = multer({
         storage: storage
     }).single('file');
     upload(req, res, function (err) {
-        res.end('File is uploaded')
+        console.log(req.body);
+        res.json({
+            responseCode: "0",
+            responseDescription: "File is uploaded"
+        });
     })
 })
 
